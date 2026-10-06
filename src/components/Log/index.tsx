@@ -1,38 +1,43 @@
 import React from 'react';
-import { IAction, TicTacToeType } from '../../pages/tictactoeReducer';
 
 interface ILogProps {
-  items: Map<string, string>;
-  dispatch: React.Dispatch<IAction>;
+  history: number[];
+  labels: { X: string; O: string };
 }
 
-const Log: React.FC<ILogProps> = ({ items, dispatch }) => {
-  const renderLog = () => {
-    const data: string[] = [];
-
-    items.forEach((item, key) => {
-      data.push(`${item} clicked at square ${parseInt(key) + 1}.`);
-    });
-
-    return data.reverse();
-  };
+const Log: React.FC<ILogProps> = ({ history, labels }) => {
+  const entries = history
+    .map((square, move) => ({
+      move,
+      who: move % 2 === 0 ? labels.X : labels.O,
+      mark: move % 2 === 0 ? 'X' : 'O',
+      square: square + 1
+    }))
+    .reverse();
 
   return (
-    <div className="log space-y-2">
-      <h2 className="text-3xl font-semibold">Log:</h2>
-      <button
-        className={`bg-indigo-500 text-white px-4 py-2 rounded-md ${
-          items.size > 0 ? 'block' : 'hidden'
-        }`}
-        onClick={() => dispatch({ type: TicTacToeType.UNDO })}
-      >
-        Undo
-      </button>
-      {renderLog().map((el, index) => (
-        <p key={index} className="text-gray-400">
-          {el}
-        </p>
-      ))}
+    <div className="glass rounded-2xl p-4">
+      <p className="text-[0.65rem] uppercase tracking-[0.15em] text-white/40">Move History</p>
+      {entries.length === 0 ? (
+        <p className="mt-3 text-sm text-white/40">No moves have been played yet.</p>
+      ) : (
+        <ol className="mt-3 max-h-44 space-y-1.5 overflow-y-auto pr-1 text-sm">
+          {entries.map((entry) => (
+            <li
+              key={entry.move}
+              className="flex animate-flash-up items-center justify-between gap-3 text-white/60"
+            >
+              <span className="truncate">
+                <span className={entry.mark === 'X' ? 'text-cyan-200' : 'text-fuchsia-200'}>
+                  {entry.mark}
+                </span>{' '}
+                {entry.who}
+              </span>
+              <span className="tabular-nums text-white/35">Square {entry.square}</span>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 };

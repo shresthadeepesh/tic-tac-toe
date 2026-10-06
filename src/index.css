@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    @apply bg-orange-100/50;
+@layer base {
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+}
+
+@layer components {
+  /* Frosted panel: translucent fill, blurred backdrop, 1px light edge. */
+  .glass {
+    @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+    box-shadow: 0 8px 32px rgb(2 6 23 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.08);
+  }
+
+  .glass-button {
+    @apply glass rounded-xl px-4 py-2 text-sm font-medium text-slate-100 transition
+      duration-300 hover:border-white/25 hover:bg-white/10 active:scale-95
+      focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+      focus-visible:outline-white/40 disabled:pointer-events-none disabled:opacity-40;
+  }
+}
+
+/* The blurred colour fields the glass picks up. */
+.aurora {
+  @apply pointer-events-none fixed inset-0 -z-10 overflow-hidden;
+}
+
+.aurora span {
+  @apply absolute rounded-full opacity-40 blur-3xl;
+}
+
+/* Anyone who asks for less motion gets the layout without the movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
